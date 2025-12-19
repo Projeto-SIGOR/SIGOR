@@ -2,95 +2,130 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* SIGOR - Sistema Integrado de Gestão de Ocorrências
+   Design System - Emergency Response Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Institutional Blue - Primary */
+    --background: 210 20% 98%;
+    --foreground: 210 50% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 50% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 50% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Dark Blue Institutional #0A2540 */
+    --primary: 210 70% 15%;
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 210 50% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 15% 92%;
+    --muted-foreground: 210 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 30% 90%;
+    --accent-foreground: 210 50% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Red Emergency #C62828 */
+    --destructive: 0 70% 47%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 70% 15%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Emergency Colors */
+    --emergency: 0 70% 47%;
+    --emergency-foreground: 0 0% 100%;
+    
+    /* Warning Yellow #F9A825 */
+    --warning: 43 95% 56%;
+    --warning-foreground: 43 100% 10%;
+    
+    /* Operational Green #2E7D32 */
+    --success: 122 45% 34%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Police Blue */
+    --police: 210 70% 35%;
+    --police-foreground: 0 0% 100%;
+    
+    /* SAMU Red */
+    --samu: 0 70% 47%;
+    --samu-foreground: 0 0% 100%;
+    
+    /* Fire Orange */
+    --fire: 25 95% 50%;
+    --fire-foreground: 0 0% 100%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Priority levels */
+    --priority-low: 122 45% 34%;
+    --priority-medium: 43 95% 56%;
+    --priority-high: 25 95% 50%;
+    --priority-critical: 0 70% 47%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Status colors */
+    --status-pending: 43 95% 56%;
+    --status-dispatched: 210 70% 50%;
+    --status-en-route: 25 95% 50%;
+    --status-on-scene: 280 60% 50%;
+    --status-completed: 122 45% 34%;
+    --status-cancelled: 210 15% 50%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 210 70% 12%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 210 70% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 50% 20%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 210 50% 20%;
+    --sidebar-ring: 210 70% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 210 50% 8%;
+    --foreground: 210 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 210 50% 12%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 70% 50%;
+    --primary-foreground: 210 50% 8%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 30% 18%;
+    --secondary-foreground: 210 20% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 210 30% 15%;
+    --muted-foreground: 210 15% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 30% 20%;
+    --accent-foreground: 210 20% 95%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 210 30% 20%;
+    --input: 210 30% 20%;
+    --ring: 210 70% 50%;
+
+    --sidebar-background: 210 50% 6%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 210 70% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 210 40% 15%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 210 40% 15%;
+    --sidebar-ring: 210 70% 50%;
   }
 }
 
@@ -100,6 +135,99 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+}
+
+@layer utilities {
+  /* Priority badge styles */
+  .priority-low {
+    @apply bg-success/20 text-success border-success/30;
+  }
+  
+  .priority-medium {
+    @apply bg-warning/20 text-warning-foreground border-warning/30;
+  }
+  
+  .priority-high {
+    @apply bg-fire/20 text-fire border-fire/30;
+  }
+  
+  .priority-critical {
+    @apply bg-emergency/20 text-emergency border-emergency/30;
+  }
+
+  /* Status badge styles */
+  .status-pending {
+    @apply bg-warning/20 text-warning-foreground;
+  }
+  
+  .status-dispatched {
+    @apply bg-police/20 text-police;
+  }
+  
+  .status-en-route {
+    @apply bg-fire/20 text-fire;
+  }
+  
+  .status-on-scene {
+    @apply bg-purple-500/20 text-purple-600;
+  }
+  
+  .status-completed {
+    @apply bg-success/20 text-success;
+  }
+  
+  .status-cancelled {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  /* Pulse animation for alerts */
+  .pulse-alert {
+    animation: pulse-alert 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-alert {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  /* Blink animation for critical alerts */
+  .blink-critical {
+    animation: blink-critical 1s ease-in-out infinite;
+  }
+
+  @keyframes blink-critical {
+    0%, 100% {
+      background-color: hsl(var(--emergency) / 0.1);
+    }
+    50% {
+      background-color: hsl(var(--emergency) / 0.3);
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }
