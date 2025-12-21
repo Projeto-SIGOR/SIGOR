@@ -50,8 +50,8 @@ const Reports = () => {
       }, {} as Record<string, number>);
 
       const byType = Object.entries(typeCount).map(([type, count]) => ({
-        name: OCCURRENCE_TYPE_LABELS[type as keyof typeof OCCURRENCE_TYPE_LABELS] || type,
-        value: count,
+        name: occurrenceTypeLabels[type as keyof typeof occurrenceTypeLabels] || type,
+        value: count as number,
       }));
 
       // By organization
@@ -62,8 +62,8 @@ const Reports = () => {
       }, {} as Record<string, number>);
 
       const byOrg = Object.entries(orgCount).map(([type, count]) => ({
-        name: ORGANIZATION_LABELS[type as keyof typeof ORGANIZATION_LABELS] || type,
-        value: count,
+        name: organizationLabels[type as keyof typeof organizationLabels] || type,
+        value: count as number,
       }));
 
       // Daily
@@ -162,8 +162,8 @@ const Reports = () => {
                 <Card>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-sigor-green/10 flex items-center justify-center">
-                        <CheckCircle className="h-5 w-5 text-sigor-green" />
+                      <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+                        <CheckCircle className="h-5 w-5 text-success" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold">{stats.completed}</p>
@@ -175,8 +175,8 @@ const Reports = () => {
                 <Card>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-sigor-yellow/10 flex items-center justify-center">
-                        <Clock className="h-5 w-5 text-sigor-yellow" />
+                      <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-warning" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold">{stats.avgResponseTime}min</p>

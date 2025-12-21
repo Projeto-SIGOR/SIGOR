@@ -133,7 +133,7 @@ const Organizations = () => {
             </div>
             <Dialog open={isOrgDialogOpen} onOpenChange={setIsOrgDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-sigor-green hover:bg-sigor-green/90">
+              <Button className="bg-success hover:bg-success/90 text-success-foreground">
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Organização
                 </Button>
@@ -171,7 +171,7 @@ const Organizations = () => {
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(ORGANIZATION_LABELS).map(([value, label]) => (
+                        {Object.entries(organizationLabels).map(([value, label]) => (
                           <SelectItem key={value} value={value}>
                             {label}
                           </SelectItem>

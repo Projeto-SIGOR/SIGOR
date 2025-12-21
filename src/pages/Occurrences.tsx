@@ -15,7 +15,7 @@ import { OccurrenceForm } from "@/components/occurrences/OccurrenceForm";
 import { Plus, Search, MapPin, Phone, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { OccurrenceStatus, occurrenceStatusLabels } from "@/types/sigor";
+import { statusLabels } from "@/types/sigor";
 
 const Occurrences = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const Occurrences = () => {
             {(isAdmin() || isDispatcher()) && (
               <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-sigor-green hover:bg-sigor-green/90">
+                  <Button className="bg-success hover:bg-success/90 text-success-foreground">
                     <Plus className="h-4 w-4 mr-2" />
                     Nova Ocorrência
                   </Button>
@@ -82,7 +82,7 @@ const Occurrences = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os status</SelectItem>
-                {Object.entries(OCCURRENCE_STATUS_LABELS).map(([value, label]) => (
+                {Object.entries(statusLabels).map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}
                   </SelectItem>

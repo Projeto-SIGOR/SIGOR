@@ -72,7 +72,7 @@ const OccurrenceDetail = () => {
     if (!selectedVehicle || !id) return;
     setLoading(true);
     try {
-      await createDispatch(id, selectedVehicle);
+      await createDispatch({ occurrence_id: id, vehicle_id: selectedVehicle });
       toast({ title: "Viatura despachada com sucesso!" });
       setSelectedVehicle("");
       fetchVehicles();
@@ -289,7 +289,7 @@ const OccurrenceDetail = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="bg-sigor-green/10 border-sigor-green text-sigor-green hover:bg-sigor-green hover:text-white"
+                            className="bg-success/10 border-success text-success hover:bg-success hover:text-success-foreground"
                             onClick={() => handleStatusChange("completed")}
                           >
                             Finalizar

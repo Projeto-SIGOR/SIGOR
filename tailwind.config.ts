@@ -73,6 +73,14 @@ export default {
           DEFAULT: "hsl(var(--fire))",
           foreground: "hsl(var(--fire-foreground))",
         },
+        // SIGOR custom colors
+        sigor: {
+          blue: "hsl(210 70% 15%)",
+          green: "hsl(122 45% 34%)",
+          red: "hsl(0 70% 47%)",
+          yellow: "hsl(43 95% 56%)",
+          orange: "hsl(25 95% 50%)",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

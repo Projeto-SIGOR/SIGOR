@@ -15,9 +15,9 @@ import { Plus, Truck, MapPin } from "lucide-react";
 import { Vehicle, Base, VehicleStatus, vehicleStatusLabels } from "@/types/sigor";
 
 const statusColors: Record<VehicleStatus, string> = {
-  available: "bg-sigor-green text-white",
-  busy: "bg-sigor-red text-white",
-  maintenance: "bg-sigor-yellow text-sigor-blue",
+  available: "bg-success text-success-foreground",
+  busy: "bg-emergency text-emergency-foreground",
+  maintenance: "bg-warning text-warning-foreground",
   off_duty: "bg-muted text-muted-foreground",
 };
 
@@ -120,7 +120,7 @@ const Vehicles = () => {
             {isAdmin() && (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-sigor-green hover:bg-sigor-green/90">
+                <Button className="bg-success hover:bg-success/90 text-success-foreground">
                     <Plus className="h-4 w-4 mr-2" />
                     Nova Viatura
                   </Button>
@@ -190,8 +190,8 @@ const Vehicles = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-sigor-green/10 flex items-center justify-center">
-                    <Truck className="h-5 w-5 text-sigor-green" />
+                  <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+                    <Truck className="h-5 w-5 text-success" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
@@ -205,8 +205,8 @@ const Vehicles = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-sigor-red/10 flex items-center justify-center">
-                    <Truck className="h-5 w-5 text-sigor-red" />
+                  <div className="w-10 h-10 rounded-lg bg-emergency/10 flex items-center justify-center">
+                    <Truck className="h-5 w-5 text-emergency" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
@@ -220,8 +220,8 @@ const Vehicles = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-sigor-yellow/10 flex items-center justify-center">
-                    <Truck className="h-5 w-5 text-sigor-yellow" />
+                  <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                    <Truck className="h-5 w-5 text-warning" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
@@ -283,7 +283,7 @@ const Vehicles = () => {
                                 <span className="font-semibold">{vehicle.identifier}</span>
                               </div>
                               <Badge className={statusColors[vehicle.status]}>
-                                {VEHICLE_STATUS_LABELS[vehicle.status]}
+                                {vehicleStatusLabels[vehicle.status]}
                               </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground mb-3">
@@ -300,7 +300,7 @@ const Vehicles = () => {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {Object.entries(VEHICLE_STATUS_LABELS).map(([value, label]) => (
+                                  {Object.entries(vehicleStatusLabels).map(([value, label]) => (
                                     <SelectItem key={value} value={value}>
                                       {label}
                                     </SelectItem>

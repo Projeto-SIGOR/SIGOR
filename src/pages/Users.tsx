@@ -155,8 +155,8 @@ const Users = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-sigor-green/10 flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-sigor-green" />
+                  <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-success" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
@@ -170,8 +170,8 @@ const Users = () => {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-sigor-red/10 flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-sigor-red" />
+                  <div className="w-10 h-10 rounded-lg bg-emergency/10 flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-emergency" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
@@ -220,7 +220,7 @@ const Users = () => {
                               variant="outline"
                               className="flex items-center gap-1"
                             >
-                              {ROLE_LABELS[role.role]}
+                              {roleLabels[role.role]}
                               <button
                                 onClick={() => handleRemoveRole(role.id)}
                                 className="ml-1 hover:text-destructive"
@@ -249,7 +249,7 @@ const Users = () => {
                                     <SelectValue placeholder="Selecione uma função" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                                    {Object.entries(roleLabels).map(([value, label]) => (
                                       <SelectItem key={value} value={value}>
                                         {label}
                                       </SelectItem>
