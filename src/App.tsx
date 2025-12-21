@@ -14,6 +14,8 @@ import Users from "./pages/Users";
 import Organizations from "./pages/Organizations";
 import Reports from "./pages/Reports";
 import OperationalPanel from "./pages/OperationalPanel";
+import Profile from "./pages/Profile";
+import Map from "./pages/Map";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +61,8 @@ function AppRoutes() {
       <Route path="/organizations" element={<PrivateRoute><Organizations /></PrivateRoute>} />
       <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
       <Route path="/operational" element={<PrivateRoute><OperationalPanel /></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <Route path="/map" element={<PrivateRoute><Map /></PrivateRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

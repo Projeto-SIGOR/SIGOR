@@ -33,6 +33,9 @@ import {
   Settings,
   LogOut,
   ChevronUp,
+  MapPin,
+  User,
+  Radio,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { roleLabels } from '@/types/sigor';
@@ -40,14 +43,15 @@ import { roleLabels } from '@/types/sigor';
 const mainNavItems = [
   { title: 'Painel', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Ocorrências', url: '/occurrences', icon: AlertTriangle },
+  { title: 'Mapa', url: '/map', icon: MapPin },
   { title: 'Viaturas', url: '/vehicles', icon: Truck },
+  { title: 'Operacional', url: '/operational', icon: Radio },
 ];
 
 const adminNavItems = [
   { title: 'Usuários', url: '/users', icon: Users },
   { title: 'Organizações', url: '/organizations', icon: Building2 },
   { title: 'Relatórios', url: '/reports', icon: BarChart3 },
-  { title: 'Configurações', url: '/settings', icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -164,6 +168,13 @@ export function AppSidebar() {
               <p className="text-sm font-medium">{profile?.full_name}</p>
               <p className="text-xs text-muted-foreground">{profile?.badge_number}</p>
             </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <NavLink to="/profile" className="flex items-center">
+                <User className="h-4 w-4 mr-2" />
+                Meu Perfil
+              </NavLink>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} className="text-destructive">
               <LogOut className="h-4 w-4 mr-2" />
