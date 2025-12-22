@@ -360,6 +360,45 @@ export type Database = {
           },
         ]
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          critical_alerts: boolean
+          email_notifications: boolean
+          high_priority_alerts: boolean
+          id: string
+          push_notifications: boolean
+          sound_enabled: boolean
+          sound_volume: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          critical_alerts?: boolean
+          email_notifications?: boolean
+          high_priority_alerts?: boolean
+          id?: string
+          push_notifications?: boolean
+          sound_enabled?: boolean
+          sound_volume?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          critical_alerts?: boolean
+          email_notifications?: boolean
+          high_priority_alerts?: boolean
+          id?: string
+          push_notifications?: boolean
+          sound_enabled?: boolean
+          sound_volume?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
