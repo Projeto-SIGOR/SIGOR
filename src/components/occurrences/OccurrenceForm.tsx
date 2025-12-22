@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useOccurrences } from '@/hooks/useOccurrences';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import { 
   Organization, 
   OccurrenceType, 
@@ -44,7 +45,7 @@ export function OccurrenceForm({ onSuccess }: OccurrenceFormProps) {
   const { profile } = useAuth();
   const { createOccurrence } = useOccurrences();
   const { toast } = useToast();
-  
+  const { latitude, longitude, loading: gpsLoading, getCurrentPosition, error: gpsError } = useGeolocation();
   const [loading, setLoading] = useState(false);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -59,6 +60,8 @@ export function OccurrenceForm({ onSuccess }: OccurrenceFormProps) {
     caller_phone: '',
     location_address: '',
     location_reference: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
 
   useEffect(() => {
@@ -100,6 +103,8 @@ export function OccurrenceForm({ onSuccess }: OccurrenceFormProps) {
         caller_phone: result.data.caller_phone,
         location_address: result.data.location_address,
         location_reference: result.data.location_reference,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
       });
       
       toast({

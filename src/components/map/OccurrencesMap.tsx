@@ -92,8 +92,8 @@ interface OccurrencesMapProps {
 export function OccurrencesMap({
   occurrences,
   vehicles = [],
-  center = [-23.5505, -46.6333], // São Paulo default
-  zoom = 12,
+  center = [-24.2469, -51.6833], // Ivaiporã, Paraná
+  zoom = 13,
   onOccurrenceClick,
 }: OccurrencesMapProps) {
   const [mapCenter, setMapCenter] = useState<[number, number]>(center);
