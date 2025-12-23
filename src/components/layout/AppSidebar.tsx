@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
@@ -95,7 +95,7 @@ export function AppSidebar() {
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink
+                    <Link
                       to={item.url}
                       className={cn(
                         'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors',
@@ -106,7 +106,7 @@ export function AppSidebar() {
                     >
                       <item.icon className="h-5 w-5" />
                       {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -119,10 +119,10 @@ export function AppSidebar() {
             <SidebarGroupLabel>Administração</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {adminNavItems.map((item) => (
+              {adminNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink
+                      <Link
                         to={item.url}
                         className={cn(
                           'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors',
@@ -133,7 +133,7 @@ export function AppSidebar() {
                       >
                         <item.icon className="h-5 w-5" />
                         {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -170,10 +170,10 @@ export function AppSidebar() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <NavLink to="/profile" className="flex items-center">
+              <Link to="/profile" className="flex items-center cursor-pointer">
                 <User className="h-4 w-4 mr-2" />
                 Meu Perfil
-              </NavLink>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} className="text-destructive">

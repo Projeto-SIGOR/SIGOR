@@ -8,7 +8,7 @@ import { OccurrencesMap } from '@/components/map/OccurrencesMap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, AlertTriangle, Truck, RefreshCw } from 'lucide-react';
+import { MapPin, AlertTriangle, Truck, RefreshCw, ArrowLeft } from 'lucide-react';
 import { Vehicle, Occurrence, priorityLabels, statusLabels } from '@/types/sigor';
 
 const Map = () => {
@@ -64,6 +64,13 @@ const Map = () => {
           <header className="h-16 border-b bg-card flex items-center justify-between px-4 lg:px-6 shadow-sm">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-foreground" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/dashboard')}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <div className="flex items-center gap-3">
                 <MapPin className="h-5 w-5 text-primary" />
                 <h1 className="text-lg font-bold text-foreground">Mapa de Ocorrências</h1>

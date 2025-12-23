@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,15 +11,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { User, Phone, BadgeCheck, Bell, Volume2, Mail, Save, Shield } from 'lucide-react';
+import { 
+  User, 
+  BadgeCheck, 
+  Bell, 
+  Volume2, 
+  Mail, 
+  Save, 
+  Shield, 
+  ArrowLeft,
+  Smartphone,
+  Loader2
+} from 'lucide-react';
 import { roleLabels } from '@/types/sigor';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, profile, roles } = useAuth();
   const { toast } = useToast();
+  const { preferences, loading: prefsLoading, updatePreferences } = useUserPreferences();
+  const { 
+    isSupported: pushSupported, 
+    isSubscribed: pushSubscribed, 
+    permission: pushPermission,
+    loading: pushLoading,
+    subscribe: subscribePush,
+    unsubscribe: unsubscribePush,
+    sendTestNotification
+  } = usePushNotifications();
+  
   const [loading, setLoading] = useState(false);
   
   // Form state
@@ -26,14 +53,6 @@ const Profile = () => {
     badge_number: '',
   });
 
-  // Notification preferences (stored in localStorage for now)
-  const [notifications, setNotifications] = useState({
-    soundEnabled: true,
-    criticalAlerts: true,
-    highPriorityAlerts: true,
-    emailNotifications: false,
-  });
-
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -41,12 +60,6 @@ const Profile = () => {
         phone: profile.phone || '',
         badge_number: profile.badge_number || '',
       });
-    }
-
-    // Load notification preferences from localStorage
-    const savedNotifications = localStorage.getItem('sigor_notifications');
-    if (savedNotifications) {
-      setNotifications(JSON.parse(savedNotifications));
     }
   }, [profile]);
 
@@ -79,11 +92,29 @@ const Profile = () => {
     }
   };
 
-  const handleNotificationChange = (key: keyof typeof notifications, value: boolean) => {
-    const newNotifications = { ...notifications, [key]: value };
-    setNotifications(newNotifications);
-    localStorage.setItem('sigor_notifications', JSON.stringify(newNotifications));
-    toast({ title: 'Preferências atualizadas!' });
+  const handlePreferenceChange = async (key: string, value: boolean | number) => {
+    const success = await updatePreferences({ [key]: value });
+    if (success) {
+      toast({ title: 'Preferências atualizadas!' });
+    } else {
+      toast({ 
+        title: 'Erro ao atualizar preferências',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handlePushToggle = async () => {
+    if (pushSubscribed) {
+      await unsubscribePush();
+      await updatePreferences({ push_notifications: false });
+    } else {
+      const success = await subscribePush();
+      if (success) {
+        await updatePreferences({ push_notifications: true });
+        toast({ title: 'Notificações push ativadas!' });
+      }
+    }
   };
 
   const getInitials = (name: string) => {
@@ -102,6 +133,14 @@ const Profile = () => {
         <main className="flex-1 flex flex-col">
           <header className="h-16 border-b bg-card flex items-center px-4 lg:px-6 shadow-sm">
             <SidebarTrigger className="mr-4" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate(-1)}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <div className="flex items-center gap-3">
               <User className="h-5 w-5 text-primary" />
               <h1 className="text-lg font-bold text-foreground">Meu Perfil</h1>
@@ -216,93 +255,196 @@ const Profile = () => {
                 </CardContent>
               </Card>
 
-              {/* Notification Preferences */}
+              {/* Sound & Alert Preferences */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Bell className="h-5 w-5" />
-                    Preferências de Notificação
+                    <Volume2 className="h-5 w-5" />
+                    Sons de Alerta
                   </CardTitle>
                   <CardDescription>
-                    Configure como você deseja receber alertas
+                    Configure os sons de alerta para novas ocorrências
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Volume2 className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Sons de Alerta</p>
-                        <p className="text-sm text-muted-foreground">
-                          Reproduzir sons para novas ocorrências
-                        </p>
-                      </div>
+                  {prefsLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
-                    <Switch
-                      checked={notifications.soundEnabled}
-                      onCheckedChange={(checked) =>
-                        handleNotificationChange('soundEnabled', checked)
-                      }
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-emergency" />
-                      <div>
-                        <p className="font-medium">Alertas Críticos</p>
-                        <p className="text-sm text-muted-foreground">
-                          Notificações para ocorrências críticas
-                        </p>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Volume2 className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">Habilitar Sons</p>
+                            <p className="text-sm text-muted-foreground">
+                              Reproduzir sons para novas ocorrências
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={preferences?.sound_enabled ?? true}
+                          onCheckedChange={(checked) =>
+                            handlePreferenceChange('sound_enabled', checked)
+                          }
+                        />
                       </div>
-                    </div>
-                    <Switch
-                      checked={notifications.criticalAlerts}
-                      onCheckedChange={(checked) =>
-                        handleNotificationChange('criticalAlerts', checked)
-                      }
-                    />
-                  </div>
 
-                  <Separator />
+                      {preferences?.sound_enabled && (
+                        <>
+                          <Separator />
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium">Volume do Alerta</p>
+                              <span className="text-sm text-muted-foreground">
+                                {Math.round((preferences?.sound_volume ?? 0.5) * 100)}%
+                              </span>
+                            </div>
+                            <Slider
+                              value={[preferences?.sound_volume ?? 0.5]}
+                              onValueChange={([value]) => 
+                                handlePreferenceChange('sound_volume', value)
+                              }
+                              max={1}
+                              step={0.1}
+                              className="w-full"
+                            />
+                          </div>
+                        </>
+                      )}
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Bell className="h-5 w-5 text-fire" />
-                      <div>
-                        <p className="font-medium">Alertas de Alta Prioridade</p>
-                        <p className="text-sm text-muted-foreground">
-                          Notificações para ocorrências de alta prioridade
-                        </p>
+                      <Separator />
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Shield className="h-5 w-5 text-emergency" />
+                          <div>
+                            <p className="font-medium">Alertas Críticos</p>
+                            <p className="text-sm text-muted-foreground">
+                              Som para ocorrências críticas
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={preferences?.critical_alerts ?? true}
+                          onCheckedChange={(checked) =>
+                            handlePreferenceChange('critical_alerts', checked)
+                          }
+                        />
                       </div>
+
+                      <Separator />
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Bell className="h-5 w-5 text-fire" />
+                          <div>
+                            <p className="font-medium">Alertas de Alta Prioridade</p>
+                            <p className="text-sm text-muted-foreground">
+                              Som para ocorrências de alta prioridade
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={preferences?.high_priority_alerts ?? true}
+                          onCheckedChange={(checked) =>
+                            handlePreferenceChange('high_priority_alerts', checked)
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Push Notifications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Smartphone className="h-5 w-5" />
+                    Notificações Push
+                  </CardTitle>
+                  <CardDescription>
+                    Receba notificações mesmo com o navegador em segundo plano
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {!pushSupported ? (
+                    <div className="text-center py-4 text-muted-foreground">
+                      <p>Seu navegador não suporta notificações push.</p>
                     </div>
-                    <Switch
-                      checked={notifications.highPriorityAlerts}
-                      onCheckedChange={(checked) =>
-                        handleNotificationChange('highPriorityAlerts', checked)
-                      }
-                    />
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Bell className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-medium">Notificações Push</p>
+                            <p className="text-sm text-muted-foreground">
+                              {pushPermission === 'denied' 
+                                ? 'Bloqueado pelo navegador' 
+                                : pushSubscribed 
+                                  ? 'Ativado' 
+                                  : 'Desativado'}
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={pushSubscribed}
+                          onCheckedChange={handlePushToggle}
+                          disabled={pushLoading || pushPermission === 'denied'}
+                        />
+                      </div>
 
-                  <Separator />
+                      {pushSubscribed && (
+                        <>
+                          <Separator />
+                          <Button 
+                            variant="outline" 
+                            onClick={sendTestNotification}
+                            className="w-full"
+                          >
+                            Enviar Notificação de Teste
+                          </Button>
+                        </>
+                      )}
 
+                      {pushPermission === 'denied' && (
+                        <p className="text-sm text-destructive">
+                          As notificações foram bloqueadas. Altere as configurações do navegador para permitir.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Email Notifications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5" />
+                    Notificações por E-mail
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Mail className="h-5 w-5 text-muted-foreground" />
                       <div>
-                        <p className="font-medium">Notificações por E-mail</p>
+                        <p className="font-medium">Resumo Diário</p>
                         <p className="text-sm text-muted-foreground">
-                          Receber resumo diário por e-mail
+                          Receber resumo de ocorrências por e-mail
                         </p>
                       </div>
                     </div>
                     <Switch
-                      checked={notifications.emailNotifications}
+                      checked={preferences?.email_notifications ?? false}
                       onCheckedChange={(checked) =>
-                        handleNotificationChange('emailNotifications', checked)
+                        handlePreferenceChange('email_notifications', checked)
                       }
+                      disabled={prefsLoading}
                     />
                   </div>
                 </CardContent>

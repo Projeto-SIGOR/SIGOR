@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOccurrences } from "@/hooks/useOccurrences";
-import { useAlertSound } from "@/hooks/useAlertSound";
+import { useAlertSoundWithPrefs } from "@/hooks/useAlertSoundWithPrefs";
 import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -13,7 +13,7 @@ import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge";
 import { OrganizationBadge } from "@/components/ui/organization-badge";
 import { OccurrenceForm } from "@/components/occurrences/OccurrenceForm";
 import { OccurrenceFilters, OccurrenceFiltersState } from "@/components/occurrences/OccurrenceFilters";
-import { Plus, MapPin, Phone, Clock, AlertTriangle } from "lucide-react";
+import { Plus, MapPin, Phone, Clock, AlertTriangle, ArrowLeft } from "lucide-react";
 import { format, isAfter, isBefore, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Occurrence, Organization } from "@/types/sigor";
@@ -22,7 +22,7 @@ const Occurrences = () => {
   const navigate = useNavigate();
   const { isAdmin, isDispatcher } = useAuth();
   const { occurrences, loading } = useOccurrences();
-  const { playAlertSound } = useAlertSound();
+  const { playAlertSound } = useAlertSoundWithPrefs();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const previousOccurrencesRef = useRef<string[]>([]);
@@ -55,19 +55,13 @@ const Occurrences = () => {
     const newOccurrences = occurrences.filter(o => !previousIds.includes(o.id));
 
     if (newOccurrences.length > 0 && previousIds.length > 0) {
-      // Get notification preferences
-      const savedNotifications = localStorage.getItem('sigor_notifications');
-      const notifications = savedNotifications ? JSON.parse(savedNotifications) : { soundEnabled: true };
+      // Play sound based on highest priority new occurrence
+      const highestPriority = newOccurrences.reduce((highest, occ) => {
+        const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+        return priorityOrder[occ.priority] > priorityOrder[highest] ? occ.priority : highest;
+      }, 'low' as 'low' | 'medium' | 'high' | 'critical');
 
-      if (notifications.soundEnabled) {
-        // Play sound based on highest priority new occurrence
-        const highestPriority = newOccurrences.reduce((highest, occ) => {
-          const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-          return priorityOrder[occ.priority] > priorityOrder[highest] ? occ.priority : highest;
-        }, 'low' as 'low' | 'medium' | 'high' | 'critical');
-
-        playAlertSound(highestPriority);
-      }
+      playAlertSound(highestPriority);
     }
 
     previousOccurrencesRef.current = currentIds;
@@ -111,6 +105,13 @@ const Occurrences = () => {
           <header className="h-16 border-b bg-card flex items-center justify-between px-4 lg:px-6 shadow-sm">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-foreground" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/dashboard')}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-warning" />
                 <h1 className="text-lg font-bold text-foreground">Ocorrências</h1>

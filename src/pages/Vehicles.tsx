@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Truck, MapPin } from "lucide-react";
+import { Plus, Truck, MapPin, ArrowLeft } from "lucide-react";
 import { Vehicle, Base, VehicleStatus, vehicleStatusLabels } from "@/types/sigor";
 
 const statusColors: Record<VehicleStatus, string> = {
@@ -22,6 +23,7 @@ const statusColors: Record<VehicleStatus, string> = {
 };
 
 const Vehicles = () => {
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const { toast } = useToast();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -110,12 +112,20 @@ const Vehicles = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <main className="flex-1 p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Viaturas</h1>
-              <p className="text-muted-foreground">Gestão da frota em tempo real</p>
+        <main className="flex-1 flex flex-col">
+          <header className="h-16 border-b bg-card flex items-center justify-between px-4 lg:px-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="text-foreground" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/dashboard')}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Viaturas</h1>
+              </div>
             </div>
             {isAdmin() && (
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -183,10 +193,11 @@ const Vehicles = () => {
                 </DialogContent>
               </Dialog>
             )}
-          </div>
+          </header>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="flex-1 p-4 lg:p-6 overflow-auto bg-muted/30">
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
@@ -317,6 +328,7 @@ const Vehicles = () => {
               })}
             </div>
           )}
+          </div>
         </main>
       </div>
     </SidebarProvider>

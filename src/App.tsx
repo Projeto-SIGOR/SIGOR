@@ -54,14 +54,24 @@ function AppRoutes() {
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
       <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/ocorrencias" element={<PrivateRoute><Occurrences /></PrivateRoute>} />
       <Route path="/occurrences" element={<PrivateRoute><Occurrences /></PrivateRoute>} />
+      <Route path="/ocorrencias/nova" element={<PrivateRoute><Occurrences /></PrivateRoute>} />
+      <Route path="/ocorrencias/:id" element={<PrivateRoute><OccurrenceDetail /></PrivateRoute>} />
       <Route path="/occurrences/:id" element={<PrivateRoute><OccurrenceDetail /></PrivateRoute>} />
+      <Route path="/veiculos" element={<PrivateRoute><Vehicles /></PrivateRoute>} />
       <Route path="/vehicles" element={<PrivateRoute><Vehicles /></PrivateRoute>} />
+      <Route path="/usuarios" element={<PrivateRoute><Users /></PrivateRoute>} />
       <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
+      <Route path="/organizacoes" element={<PrivateRoute><Organizations /></PrivateRoute>} />
       <Route path="/organizations" element={<PrivateRoute><Organizations /></PrivateRoute>} />
+      <Route path="/relatorios" element={<PrivateRoute><Reports /></PrivateRoute>} />
       <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+      <Route path="/operacional" element={<PrivateRoute><OperationalPanel /></PrivateRoute>} />
       <Route path="/operational" element={<PrivateRoute><OperationalPanel /></PrivateRoute>} />
+      <Route path="/perfil" element={<PrivateRoute><Profile /></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <Route path="/mapa" element={<PrivateRoute><Map /></PrivateRoute>} />
       <Route path="/map" element={<PrivateRoute><Map /></PrivateRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
