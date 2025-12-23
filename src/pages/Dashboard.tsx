@@ -2,20 +2,26 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
-import { DispatcherDashboard } from '@/components/dashboard/DispatcherDashboard';
+import { PoliceDispatcherDashboard } from '@/components/dashboard/PoliceDispatcherDashboard';
+import { FireDispatcherDashboard } from '@/components/dashboard/FireDispatcherDashboard';
+import { SamuDispatcherDashboard } from '@/components/dashboard/SamuDispatcherDashboard';
 import { TeamDashboard } from '@/components/dashboard/TeamDashboard';
 import { ObserverDashboard } from '@/components/dashboard/ObserverDashboard';
 import { Shield } from 'lucide-react';
 
 export default function Dashboard() {
-  const { profile, isAdmin, isDispatcher, isOperational, isObserver } = useAuth();
+  const { profile, roles, isAdmin, isObserver } = useAuth();
 
   const renderDashboard = () => {
     if (isAdmin()) return <AdminDashboard />;
-    if (isDispatcher()) return <DispatcherDashboard />;
-    if (isOperational()) return <TeamDashboard />;
+    if (roles.includes('dispatcher_police')) return <PoliceDispatcherDashboard />;
+    if (roles.includes('dispatcher_fire')) return <FireDispatcherDashboard />;
+    if (roles.includes('dispatcher_samu')) return <SamuDispatcherDashboard />;
+    if (roles.includes('police_officer') || roles.includes('firefighter') || roles.includes('samu_team')) {
+      return <TeamDashboard />;
+    }
     if (isObserver()) return <ObserverDashboard />;
-    return <DispatcherDashboard />;
+    return <PoliceDispatcherDashboard />;
   };
 
   return (

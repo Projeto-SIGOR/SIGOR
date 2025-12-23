@@ -83,6 +83,8 @@ export function useOccurrences(organizationId?: string) {
     caller_phone?: string;
     location_address?: string;
     location_reference?: string;
+    latitude?: number | null;
+    longitude?: number | null;
   }) => {
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) throw new Error('Not authenticated');

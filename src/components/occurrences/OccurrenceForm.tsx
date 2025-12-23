@@ -64,6 +64,13 @@ export function OccurrenceForm({ onSuccess }: OccurrenceFormProps) {
     longitude: null as number | null,
   });
 
+  // Update form when GPS coordinates change
+  useEffect(() => {
+    if (latitude && longitude) {
+      setFormData(prev => ({ ...prev, latitude, longitude }));
+    }
+  }, [latitude, longitude]);
+
   useEffect(() => {
     fetchOrganizations();
   }, []);
@@ -275,6 +282,33 @@ export function OccurrenceForm({ onSuccess }: OccurrenceFormProps) {
             onChange={(e) => updateField('location_reference', e.target.value)}
             placeholder="Próximo a..."
           />
+        </div>
+
+        {/* GPS Capture */}
+        <div className="space-y-2">
+          <Label>Coordenadas GPS</Label>
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                getCurrentPosition();
+              }}
+              disabled={gpsLoading}
+              className="flex items-center gap-2"
+            >
+              <MapPin className="h-4 w-4" />
+              {gpsLoading ? 'Obtendo localização...' : 'Capturar GPS'}
+            </Button>
+            {(formData.latitude || latitude) && (
+              <span className="text-sm text-muted-foreground">
+                {(formData.latitude || latitude)?.toFixed(6)}, {(formData.longitude || longitude)?.toFixed(6)}
+              </span>
+            )}
+          </div>
+          {gpsError && (
+            <p className="text-sm text-destructive">{gpsError}</p>
+          )}
         </div>
       </div>
 
