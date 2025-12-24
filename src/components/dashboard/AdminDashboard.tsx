@@ -42,6 +42,10 @@ interface Stats {
   occurrencesByType: { name: string; value: number }[];
   occurrencesByPriority: { name: string; value: number; color: string }[];
   weeklyTrend: { day: string; occurrences: number }[];
+  avgResponseTime: number;
+  completionRate: number;
+  responseTimeByOrg: { name: string; time: number }[];
+  completionByOrg: { name: string; rate: number }[];
 }
 
 const PRIORITY_COLORS = {
@@ -58,14 +62,16 @@ export function AdminDashboard() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const [usersRes, orgsRes, vehiclesRes, occurrencesRes] = await Promise.all([
+      const [usersRes, orgsRes, vehiclesRes, occurrencesRes, organizationsRes] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('organizations').select('id', { count: 'exact', head: true }),
         supabase.from('vehicles').select('id', { count: 'exact', head: true }),
-        supabase.from('occurrences').select('*'),
+        supabase.from('occurrences').select('*, organization:organizations(*)'),
+        supabase.from('organizations').select('*'),
       ]);
 
       const occurrences = occurrencesRes.data || [];
+      const organizations = organizationsRes.data || [];
       const activeStatuses = ['pending', 'dispatched', 'en_route', 'on_scene', 'transporting'];
       
       const activeOccurrences = occurrences.filter(o => activeStatuses.includes(o.status));
@@ -120,6 +126,57 @@ export function AdminDashboard() {
         });
       }
 
+      // Calculate average response time (time from created to closed)
+      const completedOccs = occurrences.filter(o => o.status === 'completed' && o.closed_at);
+      let avgResponseTime = 0;
+      if (completedOccs.length > 0) {
+        const totalTime = completedOccs.reduce((sum, o) => {
+          const created = new Date(o.created_at).getTime();
+          const closed = new Date(o.closed_at!).getTime();
+          return sum + (closed - created);
+        }, 0);
+        avgResponseTime = Math.round(totalTime / completedOccs.length / 60000); // in minutes
+      }
+
+      // Completion rate
+      const completionRate = occurrences.length > 0 
+        ? Math.round((completedOccs.length / occurrences.length) * 100) 
+        : 0;
+
+      // Response time and completion rate by organization
+      const orgLabels: Record<string, string> = {
+        police: 'Polícia',
+        samu: 'SAMU',
+        fire: 'Bombeiros',
+      };
+
+      const responseTimeByOrg = organizations.map(org => {
+        const orgOccs = completedOccs.filter(o => o.organization_id === org.id);
+        let time = 0;
+        if (orgOccs.length > 0) {
+          const totalTime = orgOccs.reduce((sum, o) => {
+            const created = new Date(o.created_at).getTime();
+            const closed = new Date(o.closed_at!).getTime();
+            return sum + (closed - created);
+          }, 0);
+          time = Math.round(totalTime / orgOccs.length / 60000);
+        }
+        return {
+          name: orgLabels[org.type] || org.name,
+          time,
+        };
+      }).filter(item => item.time > 0);
+
+      const completionByOrg = organizations.map(org => {
+        const orgOccs = occurrences.filter(o => o.organization_id === org.id);
+        const orgCompleted = orgOccs.filter(o => o.status === 'completed');
+        const rate = orgOccs.length > 0 ? Math.round((orgCompleted.length / orgOccs.length) * 100) : 0;
+        return {
+          name: orgLabels[org.type] || org.name,
+          rate,
+        };
+      }).filter(item => item.rate > 0);
+
       setStats({
         totalUsers: usersRes.count || 0,
         totalOrganizations: orgsRes.count || 0,
@@ -137,6 +194,10 @@ export function AdminDashboard() {
           color: PRIORITY_COLORS[key as keyof typeof PRIORITY_COLORS] || '#888',
         })),
         weeklyTrend,
+        avgResponseTime,
+        completionRate,
+        responseTimeByOrg,
+        completionByOrg,
       });
     } catch (error) {
       console.error('Error fetching admin stats:', error);
@@ -321,7 +382,7 @@ export function AdminDashboard() {
         </Card>
 
         {/* By Type */}
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg">Por Tipo de Ocorrência</CardTitle>
             <CardDescription>Distribuição por categoria</CardDescription>
@@ -334,6 +395,58 @@ export function AdminDashboard() {
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Quantidade" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Average Response Time by Organization */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Tempo Médio de Resposta
+            </CardTitle>
+            <CardDescription>Por organização (em minutos)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4 text-center">
+              <span className="text-4xl font-bold text-primary">{stats.avgResponseTime}</span>
+              <span className="text-lg text-muted-foreground ml-2">min (geral)</span>
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={stats.responseTimeByOrg} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={80} />
+                <Tooltip formatter={(value) => `${value} min`} />
+                <Bar dataKey="time" fill="hsl(var(--warning))" radius={[0, 4, 4, 0]} name="Tempo" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Completion Rate by Organization */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Taxa de Conclusão
+            </CardTitle>
+            <CardDescription>Por organização (%)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4 text-center">
+              <span className="text-4xl font-bold text-success">{stats.completionRate}%</span>
+              <span className="text-lg text-muted-foreground ml-2">(geral)</span>
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={stats.completionByOrg} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 100]} />
+                <YAxis dataKey="name" type="category" width={80} />
+                <Tooltip formatter={(value) => `${value}%`} />
+                <Bar dataKey="rate" fill="hsl(var(--success))" radius={[0, 4, 4, 0]} name="Taxa" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

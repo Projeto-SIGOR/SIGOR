@@ -19,6 +19,7 @@ import { ptBR } from 'date-fns/locale';
 import { statusLabels, priorityLabels } from '@/types/sigor';
 import { useToast } from '@/hooks/use-toast';
 import { VehicleCrewPanel } from '@/components/vehicles/VehicleCrewPanel';
+import { useDispatchNotifications } from '@/hooks/useDispatchNotifications';
 
 interface TeamDispatch {
   id: string;
@@ -51,6 +52,9 @@ export function TeamDashboard() {
   const [dispatches, setDispatches] = useState<TeamDispatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  
+  // Initialize dispatch notifications
+  useDispatchNotifications();
 
   const fetchDispatches = async () => {
     setLoading(true);
