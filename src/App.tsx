@@ -13,6 +13,7 @@ import Vehicles from "./pages/Vehicles";
 import Users from "./pages/Users";
 import Organizations from "./pages/Organizations";
 import Reports from "./pages/Reports";
+import ShiftHistory from "./pages/ShiftHistory";
 import OperationalPanel from "./pages/OperationalPanel";
 import Profile from "./pages/Profile";
 import Map from "./pages/Map";
@@ -67,6 +68,8 @@ function AppRoutes() {
       <Route path="/organizations" element={<PrivateRoute><Organizations /></PrivateRoute>} />
       <Route path="/relatorios" element={<PrivateRoute><Reports /></PrivateRoute>} />
       <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+      <Route path="/turnos" element={<PrivateRoute><ShiftHistory /></PrivateRoute>} />
+      <Route path="/shifts" element={<PrivateRoute><ShiftHistory /></PrivateRoute>} />
       <Route path="/operacional" element={<PrivateRoute><OperationalPanel /></PrivateRoute>} />
       <Route path="/operational" element={<PrivateRoute><OperationalPanel /></PrivateRoute>} />
       <Route path="/perfil" element={<PrivateRoute><Profile /></PrivateRoute>} />
