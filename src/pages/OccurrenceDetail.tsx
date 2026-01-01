@@ -26,6 +26,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Vehicle, OccurrenceHistory, OccurrenceStatus } from "@/types/sigor";
+import ChatRoom from "@/components/chat/ChatRoom";
 
 const OccurrenceDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -349,6 +350,15 @@ const OccurrenceDetail = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Chat */}
+              <div className="h-96">
+                <ChatRoom 
+                  roomType="occurrence" 
+                  roomId={id!} 
+                  title="Chat da Ocorrência" 
+                />
+              </div>
             </div>
           </div>
         </main>
